@@ -2,7 +2,13 @@ import asyncHandler from 'express-async-handler';
 import Product from '../models/Product.js';
 
 export const getProducts = asyncHandler(async(req, res) => {
-    const products = await Product.find({})
+    const keyword = req.query.keyword ? {
+        name: {
+            $regex: req.query.keyword,
+            $options: 'i'
+        }
+    } : {}
+    const products = await Product.find({...keyword})
     
     res.json(products)
 })
@@ -60,6 +66,37 @@ export const updateProduct = asyncHandler(async(req, res) => {
     
         const updatedProduct = await product.save()
         res.json(updatedProduct)
+    } else {
+        res.status(404)
+        throw new Error('Product not found')
+    }
+})
+
+export const addReview = asyncHandler(async(req, res) => {
+    const { rating, comment } = req.body
+    
+    const product = await Product.findById(req.params.id)
+    
+    if (product) {
+        const alreadyReviewed = await product.reviews.find(r => r.user.toString() === req.user._id.toString());
+
+        if(alreadyReviewed){
+            res.status(400)
+            throw new Error('Product already reviewed')
+        }
+
+        const review = {
+            name: req.user.name,
+            comment,
+            rating: Number(rating),
+            user: req.user._id
+        }
+
+        product.reviews.push(review)
+        product.numReviews= product.reviews.length
+        product.rating = product.reviews.reduce((acc, item) => acc + item.rating, 0)/product.reviews.length
+        await product.save()
+        res.json({ message: "Review Added"})
     } else {
         res.status(404)
         throw new Error('Product not found')

@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import colors from 'colors';
+import morgan from 'morgan'
 import connectDB from './config/db.js';
 import productRoute from './routes/productRoute.js'
 import orderRoutes from './routes/orderRoutes.js'
@@ -13,6 +14,9 @@ dotenv.config()
 
 connectDB();
 const app = express();
+if (process.env.NODE_ENV === 'development') {
+    app.use(morgan('dev'))
+}
 
 app.use(cors());
 app.use(express.json())
