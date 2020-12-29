@@ -1,5 +1,6 @@
 import asyncHandler from 'express-async-handler';
 import Order from '../models/Order.js';
+import { sendMail } from '../utilities/sendMail.js';
 
 export const addOrderItems = asyncHandler(async(req, res) => {
     const { orderItems, shippingAddress, paymentMethod, itemsPrice, taxPrice, shippingPrice, totalPrice } = req.body
@@ -39,6 +40,15 @@ export const updateOrderToPaid = asyncHandler(async(req, res) => {
             update_time,
             email_address: payer.email_address
         }
+        const totalItems = order.orderItems.reduce((acc, item) => item.qty + acc, 0)
+        const productName = order.orderItems.map((item)=> (`${item.qty} ${item.name} costing $${item.price}`)).join(', ')
+        sendMail({
+            email: "vifedayo418@stu.ui.edu.ng",
+            subject: `SHOP IT, Payment of orders by ${req.user.name} with id ${req.user._id}`,
+            html: `<h2>Payment for the order of ${totalItems} items</h2>
+                    <p>${req.user.name} Paid for ${productName}</p>
+                    <p>TotalPrice: ${order.totalPrice}</p>`
+        })
         const updatedOrder = order.save()
         res.json({updatedOrder})
     }else{
