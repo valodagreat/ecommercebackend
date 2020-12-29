@@ -48,7 +48,7 @@ export const updateOrderToPaid = asyncHandler(async(req, res) => {
             html: `<h2>Payment for the order of ${totalItems} items</h2>
                     <p>${req.user.name} Paid for ${productName}</p>
                     <p>TotalPrice: ${order.totalPrice}</p>`
-        })
+        }).then(result => console.log("Email Sent", result)).catch(error => console.log(error.message))
         const updatedOrder = order.save()
         res.json({updatedOrder})
     }else{
