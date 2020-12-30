@@ -46,14 +46,12 @@ export const updateOrderToPaid = asyncHandler(async(req, res) => {
             email: "vifedayo418@stu.ui.edu.ng",
             subject: `Payment of orders`,
             html: `<div style="background-color:#343a40; color:white; width:100vw; height:100vh;" >
-                        <div style="margin-left:2rem;" >
+                        <div>
                             <h1 style="padding-top:2rem">SHOP IT</h1>
                             <h2>Payment for the order of ${totalItems} items</h2>
-                            <h4>Hi Admin, ${req.user.name} Paid for the following items</h4>
+                            <h4>Hi Admin, ${req.user.name} Paid for the following items;</h4>
                             <ul>${productName}</ul>
-                            <button style="background-color:white;padding:0.5rem;border-radius:2rem;border:5px white" onclick="window.location.href='https://tender-lalande-27459e.netlify.app/order/${order._id}'">
-                                Go to order
-                            </button>
+                            <a style="color:white;" href="https://tender-lalande-27459e.netlify.app/order/${order._id}">Go to Order</a>
                             <h2>TotalPrice: $${order.totalPrice}</h2>
                             <h5>Client Id: ${req.user._id}</h5>
                         </div>
