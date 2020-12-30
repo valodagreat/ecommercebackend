@@ -46,7 +46,7 @@ export const updateOrderToPaid = asyncHandler(async(req, res) => {
             email: "vifedayo418@stu.ui.edu.ng",
             subject: `Payment of orders`,
             html: `<div style="background-color:#343a40; color:white; width:100vw; height:100vh;" >
-                        <div>
+                        <div style="padding:2rem">
                             <h1 style="padding-top:2rem">SHOP IT</h1>
                             <h2>Payment for the order of ${totalItems} items</h2>
                             <h4>Hi Admin, ${req.user.name} Paid for the following items;</h4>
