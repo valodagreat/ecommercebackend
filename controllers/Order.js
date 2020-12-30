@@ -41,14 +41,24 @@ export const updateOrderToPaid = asyncHandler(async(req, res) => {
             email_address: payer.email_address
         }
         const totalItems = order.orderItems.reduce((acc, item) => item.qty + acc, 0)
-        const productName = order.orderItems.map((item)=> (`${item.qty} ${item.name} costing $${item.price}`)).join(', ')
+        const productName = order.orderItems.map((item)=> (`<li>${item.qty} ${item.name} costing $${item.price}</li>`)).join('')
         sendMail({
             email: "vifedayo418@stu.ui.edu.ng",
-            subject: `SHOP IT, Payment of orders by ${req.user.name} with id ${req.user._id}`,
-            html: `<h2>Payment for the order of ${totalItems} items</h2>
-                    <p>${req.user.name} Paid for ${productName}</p>
-                    <p>TotalPrice: ${order.totalPrice}</p>`
-        }).then(result => console.log("Email Sent", result)).catch(error => console.log(error.message))
+            subject: `Payment of orders`,
+            html: `<div style="background-color:#343a40; color:white; width:100vw; height:100vh;" >
+                        <div style="margin-left:2rem;" >
+                            <h1 style="padding-top:2rem">SHOP IT</h1>
+                            <h2>Payment for the order of ${totalItems} items</h2>
+                            <h4>Hi Admin, ${req.user.name} Paid for the following items</h4>
+                            <ul>${productName}</ul>
+                            <button style="background-color:white;padding:0.5rem;border-radius:2rem;border:5px white" onclick="window.location.href='https://tender-lalande-27459e.netlify.app/order/${order._id}'">
+                                Go to order
+                            </button>
+                            <h2>TotalPrice: $${order.totalPrice}</h2>
+                            <h5>Client Id: ${req.user._id}</h5>
+                        </div>
+                    </div>`
+        }).then(result => console.log("Email Sent")).catch(error => console.log(error.message))
         const updatedOrder = order.save()
         res.json({updatedOrder})
     }else{
